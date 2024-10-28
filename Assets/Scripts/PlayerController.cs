@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     //public float sideDistance = 0.2f;
     private float speed;
     private float WalkX;
-    private float WalkY;
+    private float WalkZ;
     private float animationStateAcceleration = 5f;
     private float animationStateDecceleration = -5f;
 
@@ -46,21 +46,22 @@ public class PlayerController : MonoBehaviour
 
         if (movement == Vector3.zero)
         {
-            StopsWalkAnimation();
+            StopsMoveAnimation();
         }
         else 
         {
-
-            StartsWalkAnimation(x, z);
+            StartsMoveAnimation(x, z);
 
             speed = walkSpeed;
 
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKey(KeyCode.LeftShift) && z > 0)
             {
-                if (WalkX < 0.2)
-                    WalkX += Time.deltaTime * animationStateAcceleration;
-
+                playerAnimationController.SetBool("Running", true);
                 speed = runningSpeed;
+            }
+            else {
+                playerAnimationController.SetBool("Running", false);
+                speed = walkSpeed;
             }
         }
 
@@ -75,8 +76,8 @@ public class PlayerController : MonoBehaviour
             speed = walkSpeed;
         }
 
-        playerAnimationController.SetFloat("Walk Y", WalkX);
-        playerAnimationController.SetFloat("Walk X", WalkY);
+        playerAnimationController.SetFloat("Walk X", WalkX);
+        playerAnimationController.SetFloat("Walk Z", WalkZ);
 
         controller.Move(Time.deltaTime * speed * movement);
 
@@ -112,21 +113,21 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    private void StartsWalkAnimation(float x, float z) {
+    private void StartsMoveAnimation(float x, float z) {
         if (WalkX < 1 && z > 0)
             WalkX += Time.deltaTime * animationStateAcceleration;
 
         if (WalkX > -1 && z < 0)
             WalkX -= Time.deltaTime * animationStateAcceleration;
 
-        if (WalkY < 1 && x > 0)
-            WalkY += Time.deltaTime * animationStateAcceleration;
+        if (WalkZ < 1 && x > 0)
+            WalkZ += Time.deltaTime * animationStateAcceleration;
 
-        if (WalkY > -1 && x < 0)
-            WalkY -= Time.deltaTime * animationStateAcceleration;
+        if (WalkZ > -1 && x < 0)
+            WalkZ -= Time.deltaTime * animationStateAcceleration;
     }
 
-    private void StopsWalkAnimation() {
+    private void StopsMoveAnimation() {
         if (WalkX > 0)
         {
             WalkX += Time.deltaTime * animationStateDecceleration;
@@ -137,13 +138,13 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (WalkY > 0)
+        if (WalkZ > 0)
         {
-            WalkY += Time.deltaTime * animationStateDecceleration;
+            WalkZ += Time.deltaTime * animationStateDecceleration;
         }
-        else if (WalkY < 0)
+        else if (WalkZ < 0)
         {
-            WalkY -= Time.deltaTime * animationStateDecceleration;
+            WalkZ -= Time.deltaTime * animationStateDecceleration;
         }
     }
 }
