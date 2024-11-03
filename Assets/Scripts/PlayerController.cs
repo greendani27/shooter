@@ -16,14 +16,18 @@ public class PlayerController : MonoBehaviour
     //public LayerMask sideMask;
     //public Transform centerCheck;
     public Animator playerAnimationController;
+    Vector3 initialCameraPosition;
 
     public float walkSpeed = 7f;
     public float crouchSpeed = 3f;
     public float runningSpeed = 10f;
+    public float dashSpeed = 2f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
     public float groundDistance = 0.4f;
-    //public float sideDistance = 0.2f;
+    float standingHeight = 1.8f;
+    float crouchingHeight = 0.9f;
+    public float sideDistance = 0.2f;
     private float speed;
     private float WalkX;
     private float WalkZ;
@@ -37,12 +41,19 @@ public class PlayerController : MonoBehaviour
 
     Vector3 velocity;
 
+    private void Start()
+    {
+        initialCameraPosition = GameObject.FindGameObjectWithTag("MainCamera").transform.position;
+    }
+
     private void Update()
     {
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 movement = transform.right * x + transform.forward * z;
+
+        speed = walkSpeed;
 
         if (movement == Vector3.zero)
         {
@@ -52,16 +63,17 @@ public class PlayerController : MonoBehaviour
         {
             StartsMoveAnimation(x, z);
 
-            speed = walkSpeed;
-
             if (Input.GetKey(KeyCode.LeftShift) && z > 0)
             {
                 playerAnimationController.SetBool("Running", true);
                 speed = runningSpeed;
+
+                if (Input.GetKey(KeyCode.LeftControl)) {
+                    
+                }
             }
             else {
                 playerAnimationController.SetBool("Running", false);
-                speed = walkSpeed;
             }
         }
 
@@ -69,11 +81,11 @@ public class PlayerController : MonoBehaviour
         {
             speed = crouchSpeed;
             playerAnimationController.SetBool("Crouching", true);
+            controller.height = crouchingHeight;
         }
         else {
-            
             playerAnimationController.SetBool("Crouching", false);
-            speed = walkSpeed;
+            controller.height = standingHeight;
         }
 
         playerAnimationController.SetFloat("Walk X", WalkX);
@@ -128,25 +140,28 @@ public class PlayerController : MonoBehaviour
     }
 
     private void StopsMoveAnimation() {
-        if (WalkX > 0)
+        /*if (WalkX > 0.0f)
         {
             WalkX += Time.deltaTime * animationStateDecceleration;
         }
-        else if (WalkX < 0)
+        else if (WalkX < 0.0f)
         {
             WalkX -= Time.deltaTime * animationStateDecceleration;
         }
 
 
-        if (WalkZ > 0)
+        if (WalkZ > 0.0f)
         {
             WalkZ += Time.deltaTime * animationStateDecceleration;
         }
-        else if (WalkZ < 0)
+        else if (WalkZ < 0.0f)
         {
             WalkZ -= Time.deltaTime * animationStateDecceleration;
-        }
+        }*/
+        WalkX = 0;
+        WalkZ = 0;
     }
+
 }
 
 
