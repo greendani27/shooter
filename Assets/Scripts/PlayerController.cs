@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    
+    //TODO cambiar las 2 variables para la ejecucion de animaciones por un vector2
 
     public Camera pov;
     public CharacterController controller;
@@ -140,26 +142,26 @@ public class PlayerController : MonoBehaviour
     }
 
     private void StopsMoveAnimation() {
-        /*if (WalkX > 0.0f)
+        if (WalkX > 0)
         {
             WalkX += Time.deltaTime * animationStateDecceleration;
         }
-        else if (WalkX < 0.0f)
+        else if (WalkX < 0)
         {
             WalkX -= Time.deltaTime * animationStateDecceleration;
         }
 
 
-        if (WalkZ > 0.0f)
+        if (WalkZ > 0)
         {
             WalkZ += Time.deltaTime * animationStateDecceleration;
         }
-        else if (WalkZ < 0.0f)
+        else if (WalkZ < 0)
         {
             WalkZ -= Time.deltaTime * animationStateDecceleration;
-        }*/
-        WalkX = 0;
-        WalkZ = 0;
+        }
+        //WalkX = 0;
+        //WalkZ = 0;
     }
 
 }
