@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    
+
     //TODO cambiar las 2 variables para la ejecucion de animaciones por un vector2
 
     public Camera pov;
@@ -18,30 +18,48 @@ public class PlayerController : MonoBehaviour
     //public LayerMask sideMask;
     //public Transform centerCheck;
     public Animator playerAnimationController;
-    Vector3 initialCameraPosition;
+    private Vector3 initialCameraPosition;
 
-    public float walkSpeed = 7f;
-    public float crouchSpeed = 3f;
-    public float runningSpeed = 10f;
-    public float dashSpeed = 2f;
-    public float gravity = -9.81f;
-    public float jumpHeight = 3f;
-    public float groundDistance = 0.4f;
-    float standingHeight = 1.8f;
-    float crouchingHeight = 0.9f;
-    public float sideDistance = 0.2f;
+    [Header("Movement parameters")]
+    [SerializeField]
+    private float walkSpeed = 7f;
+    [SerializeField]
+    private float crouchSpeed = 3f;
+    [SerializeField]
+    private float runningSpeed = 10f;
+    [SerializeField]
+    private float dashSpeed = 2f;
+
+    [Header("Jumping parameters")]
+    [SerializeField]
+    private float gravity = -9.81f;
+    [SerializeField]
+    private float jumpHeight = 3f;
+    [SerializeField]
+    private float groundDistance = 0.4f;
+
+    [Header("Crouch parameters")]
+    [SerializeField]
+    private float standingHeight = 1.8f;
+    [SerializeField]
+    private float crouchingHeight = 0.9f;
+    [SerializeField]
+    //private float sideDistance = 0.2f;
+
     private float speed;
     private float WalkX;
     private float WalkZ;
     private float animationStateAcceleration = 5f;
     private float animationStateDecceleration = -5f;
 
-    private bool doubleJump = true;
-    bool isGrounded;
+    private bool canDoubleJump = true;
+    private bool isGrounded;
     //bool isTouchingRightWall;
     //bool isTouchingLeftWall;
 
     Vector3 velocity;
+
+    private Vector2 axis;
 
     private void Start()
     {
@@ -50,10 +68,14 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        axis.x = Input.GetAxis("Horizontal");
+        axis.y = Input.GetAxis("Vertical");
+        //float x = Input.GetAxis("Horizontal");
+        //float z = Input.GetAxis("Vertical");
 
-        Vector3 movement = transform.right * x + transform.forward * z;
+        Vector3 movement = transform.right * axis.x + transform.forward * axis.y;
+
+        
 
         speed = walkSpeed;
 
@@ -63,9 +85,9 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            StartsMoveAnimation(x, z);
+            StartsMoveAnimation(axis.x, axis.y);
 
-            if (Input.GetKey(KeyCode.LeftShift) && z > 0)
+            if (Input.GetKey(KeyCode.LeftShift) && axis.y > 0)
             {
                 playerAnimationController.SetBool("Running", true);
                 speed = runningSpeed;
@@ -105,7 +127,7 @@ public class PlayerController : MonoBehaviour
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2;
-            doubleJump = true;
+            canDoubleJump = true;
         }
 
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -114,12 +136,12 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
         }
-        else if (Input.GetButtonDown("Jump") && !isGrounded && doubleJump)
+        else if (Input.GetButtonDown("Jump") && !isGrounded && canDoubleJump)
         {
 
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
-            doubleJump = false;
+            canDoubleJump = false;
         }
 
         velocity.y += gravity * Time.deltaTime;
